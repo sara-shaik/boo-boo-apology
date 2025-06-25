@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Boo‑Boo’s Apology</title>
   <style>
     body {
@@ -9,6 +9,7 @@
       font-family: 'Arial', sans-serif;
       text-align: center;
       padding-top: 50px;
+      overflow-x: hidden;
     }
     .clickable {
       background: #ffb6c1;
@@ -27,10 +28,22 @@
       width: 200px;
       cursor: pointer;
       animation: bounceIn 1s ease;
+      position: relative;
+      display: inline-block;
+    }
+    #heart {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #ff6f91;
+      user-select: none;
     }
     #prompt {
       font-size: 1.2rem;
       margin-top: 10px;
+      color: #c7547a;
     }
     #message {
       margin-top: 30px;
@@ -47,27 +60,67 @@
     @keyframes fadeIn {
       to { opacity: 1; }
     }
+    .buttons {
+      margin-top: 25px;
+    }
+    .response-button {
+      background-color: #ffb6c1;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .response-button:hover {
+      background-color: #e98aa2;
+    }
+    /* Confetti canvas styles */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+    }
   </style>
 </head>
 <body>
   <div id="box" class="clickable">Open Me</div>
 
   <div id="bunny-container" class="hidden">
-    <img id="bunny" src="bunny.png" alt="Cute Bunny">
-    <div id="prompt">Press on my heart 💗</div>
+    <div style="position: relative; display: inline-block;">
+      <img id="bunny" src="bunny.png" alt="Cute Bunny" />
+      <div id="heart" title="Press my heart 💗">💗</div>
+    </div>
+    <div id="prompt">Press on my Cup! 💗</div>
   </div>
 
   <div id="message" class="hidden">
-    <p>I never want to take you for granted Yousufiee.<br>
-    I am sorry if you felt so...<br><br>
-    Can you please accept your Boo Boo’s apology<br>
-    and be my baby again?..The last thing i want to do is hurtt youu</p>
+    <p>
+      I never want to take you for granted Yousufiee.<br />
+      I am sorry if you felt so...<br /><br />
+      Can you accept your Boo Boo’s apology<br />
+      and be my baby again?
+    </p>
+
+    <div class="buttons">
+      <button class="response-button" onclick="sayYes()">Yes 💕</button>
+      <button class="response-button" onclick="sayNo()">No 😢</button>
+    </div>
   </div>
+
+  <canvas id="confetti-canvas"></canvas>
 
   <script>
     const box = document.getElementById('box');
     const bunnyContainer = document.getElementById('bunny-container');
     const bunny = document.getElementById('bunny');
+    const heart = document.getElementById('heart');
     const message = document.getElementById('message');
 
     box.addEventListener('click', () => {
@@ -75,9 +128,91 @@
       bunnyContainer.classList.remove('hidden');
     });
 
+    heart.addEventListener('click', () => {
+      bunnyContainer.classList.add('hidden');
+      message.classList.remove('hidden');
+    });
+
     bunny.addEventListener('click', () => {
       bunnyContainer.classList.add('hidden');
       message.classList.remove('hidden');
+    });
+
+    function sayYes() {
+      launchConfetti();
+      alert("Yippiee!!");
+    }
+
+    function sayNo() {
+      alert("It's not funny jii");
+    }
+
+    // --- Simple confetti animation ---
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confettiElements = [];
+
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function ConfettiParticle() {
+      this.x = randomRange(0, window.innerWidth);
+      this.y = randomRange(-20, 0);
+      this.size = randomRange(7, 12);
+      this.speed = randomRange(1, 3);
+      this.angle = randomRange(0, 2 * Math.PI);
+      this.color = `hsl(${Math.floor(randomRange(0, 360))}, 70%, 60%)`;
+      this.spin = randomRange(0.1, 0.3);
+    }
+
+    ConfettiParticle.prototype.update = function() {
+      this.y += this.speed;
+      this.angle += this.spin;
+      if (this.y > window.innerHeight) {
+        this.y = randomRange(-20, 0);
+        this.x = randomRange(0, window.innerWidth);
+      }
+    };
+
+    ConfettiParticle.prototype.draw = function() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+      ctx.fillStyle = this.color;
+      ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size/2);
+      ctx.restore();
+    };
+
+    function launchConfetti() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      confettiElements = [];
+      for (let i = 0; i < 150; i++) {
+        confettiElements.push(new ConfettiParticle());
+      }
+      requestAnimationFrame(confettiLoop);
+      setTimeout(() => {
+        confettiElements = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 5000);
+    }
+
+    function confettiLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiElements.forEach(c => {
+        c.update();
+        c.draw();
+      });
+      if (confettiElements.length > 0) {
+        requestAnimationFrame(confettiLoop);
+      }
+    }
+
+    // Adjust canvas size on resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     });
   </script>
 </body>
