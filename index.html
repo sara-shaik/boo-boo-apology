@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Boo‑Boo’s Apology</title>
+  <style>
+    body {
+      background: #ffe4ec;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    .clickable {
+      background: #ffb6c1;
+      color: white;
+      font-size: 2rem;
+      padding: 20px 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    #bunny-container {
+      margin-top: 30px;
+    }
+    .hidden { display: none; }
+    #bunny {
+      width: 200px;
+      cursor: pointer;
+      animation: bounceIn 1s ease;
+    }
+    #prompt {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    #message {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      color: #d14772;
+      animation: fadeIn 1s ease forwards;
+      opacity: 0;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="box" class="clickable">Open Me</div>
+
+  <div id="bunny-container" class="hidden">
+    <img id="bunny" src="bunny.png" alt="Cute Bunny">
+    <div id="prompt">Press on my heart 💗</div>
+  </div>
+
+  <div id="message" class="hidden">
+    <p>I never want to take you for granted Yousufiee.<br>
+    I am sorry if you felt so...<br><br>
+    Can you please accept your Boo Boo’s apology<br>
+    and be my baby again?..The last thing i want to do is hurtt youu</p>
+  </div>
+
+  <script>
+    const box = document.getElementById('box');
+    const bunnyContainer = document.getElementById('bunny-container');
+    const bunny = document.getElementById('bunny');
+    const message = document.getElementById('message');
+
+    box.addEventListener('click', () => {
+      box.classList.add('hidden');
+      bunnyContainer.classList.remove('hidden');
+    });
+
+    bunny.addEventListener('click', () => {
+      bunnyContainer.classList.add('hidden');
+      message.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
+
+
